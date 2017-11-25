@@ -4,17 +4,29 @@
  * and open the template in the editor.
  */
 
-'use strict';
-
-angular.module('eventApp', ['ngMaterial'])
-
-.controller('AppCtrl', function($http) {
+var app = angular.module('eventApp', ['ngMaterial']);
 
 
-})
+
+app.controller('AppCtrl', function() {
 
 
-.controller('CreerReservationCtrl', function($scope, $http) {
+});
+
+app.controller('AnnulationCtrl', function($scope, $http) {
+	$scope.deleteReservation = function () {
+		var url = "http://localhost:16569/Events-war/webresources/annulation";
+		$http.post(url, $scope.ref)
+		.then(function mySuccess(response) {
+			$scope.return = response.data;
+		}, function myError(response) {
+			$scope.return = response.statutText;
+		});
+	};
+});
+
+
+app.controller('ReservationCtrl', function($scope, $http) {
 
 	$scope.addReservation = function () {
 		var url = "http://localhost:16569/Events-war/webresources/reservation";

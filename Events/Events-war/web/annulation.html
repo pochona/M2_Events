@@ -2,7 +2,7 @@
 <html lang="fr" ng-app="eventApp">
 
     <head>
-        <title>EventEasier</title>
+        <title>Annulation réservation</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
@@ -24,12 +24,21 @@
 
     </head>
     <body>
+	    <div class="col-sm-4 offset-sm-4 text-center">
+	    	<h2>Annuler une réservation</h2>
+	        
+		    <div class="info-form">
+		    	<form name"form" ng-controller="AnnulationCtrl" class="justify-content-center">
+		            <div class="form-group">
+		                <label>Saisir la référence de la réservation :</label>
+		                <input id="textinput" name="textinput"  type="text" placeholder="Référence réservation" class="form-control input-md"  ng-model="ref">
+		            </div>
+		                <button  class="btn btn-success" ng-click="deleteReservation()">Valider</button>
 
-        <div class="col-sm-4 offset-sm-4 text-center">
-    
-            <a href="reservation.html"><button  class="btn btn-primary">Réservation</button></a>
-            <a href="annulation.html"><button  class="btn btn-primary">Annulation</button></a>
-        </div>  
-    
+		    	</form>
+		    </div>
+		</div>
+
+        </form>
     </body>
 </html>

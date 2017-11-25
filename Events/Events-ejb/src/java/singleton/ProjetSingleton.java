@@ -45,7 +45,7 @@ public class ProjetSingleton {
         return p;
     }
     
-    public String annulerPrestation(Projet projet){
+    public String annulerPrestation(String ref){
         projets.remove(projet);
         return "Prestation annulée avec succès";
     }
