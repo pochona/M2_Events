@@ -5,6 +5,8 @@
  */
 package ws;
 
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.ActivationConfigProperty;
@@ -13,6 +15,9 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import messages.Nommage;
 import messages.Projet;
 
@@ -58,6 +63,24 @@ public class GestionRestauration implements MessageListener {
                  Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
              }
         }
+    }
+    
+        private static boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
+        app.Traiteur_Service service = new app.Traiteur_Service();
+        app.Traiteur port = service.getTraiteurPort();
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(dateEvent);
+        XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        return port.reserverTraiteur(refProjet, date2, participants);
+    }
+    
+     private static boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
+        app.Traiteur_Service service = new app.Traiteur_Service();
+        app.Traiteur port = service.getTraiteurPort();
+        GregorianCalendar c = new GregorianCalendar();
+        c.setTime(dateEvent);
+        XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
+        return port.annulerTraiteur(refProjet, date2);
     }
     
 }
