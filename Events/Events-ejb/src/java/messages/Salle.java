@@ -6,6 +6,8 @@
 package messages;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  *
@@ -17,21 +19,36 @@ public class Salle implements Serializable {
     private String typeCuisine;
     private int capacitéMax;
     private boolean estrade;
-    private boolean disponible;
+    private ArrayList<Date> occupation;
     
     public Salle(int numeroSalle, int capacitéMax, String typeCuisine, boolean estrade){
         this.numeroSalle = numeroSalle;
         this.capacitéMax = capacitéMax;
         this.typeCuisine = typeCuisine; //ENUM ? simple/importante
-        this.disponible = true;
+        this.occupation = new ArrayList<Date>();
+        
+    }
+    
+    // Récupération de la liste des occupations
+    public ArrayList<Date> getOccupation(){
+        return this.occupation;
+    }
+    
+    /**
+     * setOccupation : méthode qui permet d'ajouter une date dans le calenrier de l'occupation
+     * @param d : date à rajouter
+     */
+    public void setOccupation(Date d){
+        this.occupation.add(d);
     }
 
-    public boolean isDisponible() {
-        return disponible;
-    }
-
-    public void setDisponible(boolean disponible) {
-        this.disponible = disponible;
+    /**
+     * isDisponible : verifier si une salle est dispo à une certaine date
+     * @param d : date à verifier
+     * @return boolean, true si la salle est dispo, false sinon
+     */
+    public boolean isDisponible(Date d) {
+        return !this.occupation.contains(d);
     }
 
     public int getNumeroSalle() {
@@ -58,5 +75,7 @@ public class Salle implements Serializable {
         this.capacitéMax = capacitéMax;
     }
 
-    
+    public String toString(){
+        return "Salle n°"+this.numeroSalle+", capacité : "+this.capacitéMax;
+    }
 }

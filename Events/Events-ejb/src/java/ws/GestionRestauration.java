@@ -38,7 +38,7 @@ public class GestionRestauration implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
-        logger.log(Level.INFO, "Message reçu Gestion Restauration", "Message");
+        logger.log(Level.INFO, "Message reçu Gestion Restauration : "  + message, "Message");
         if (message instanceof ObjectMessage) {
              try {
                  ObjectMessage om = (ObjectMessage) message;

@@ -48,7 +48,7 @@ public class GestionProjet implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
-        logger.log(Level.INFO, "Message reçu GestionProjet", "Message");
+        logger.log(Level.INFO, "Message reçu Gestion Projet : "  + message, "Message");
         if (message instanceof ObjectMessage) {
              try {
                  ObjectMessage om = (ObjectMessage) message;
@@ -58,7 +58,7 @@ public class GestionProjet implements MessageListener {
                     Projet projet = (Projet) obj;
 
                     // Traitement
-
+                    
 
                     // Transmission au Topic Projet
                     context.createProducer().send(topicReponse, projet);

@@ -5,7 +5,13 @@
  */
 package singleton;
 
+import exception.SalleException;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -36,14 +42,16 @@ public class SalleSingleton {
     
     private final HashMap<Integer, Salle> salles;
  
+    static final Logger logger = Logger.getLogger("SalleSingleton");
+    
     public SalleSingleton() {
         salles = new HashMap<>();
-         Salle s1 = new Salle(1, 150, "simple", false);
-         Salle s2 = new Salle(2, 100, "simple", false);
-         Salle s3 = new Salle(3, 300, "simple", true);
-         Salle s4 = new Salle(4, 150, "importante", true);
-         Salle s5 = new Salle(5, 300, "importante", true);
-         Salle s6 = new Salle(6, 150, "simple", true);
+         Salle s1 = new Salle(1, 50, "simple", false);
+         Salle s2 = new Salle(2, 30, "simple", false);
+         Salle s3 = new Salle(3, 60, "simple", true);
+         Salle s4 = new Salle(4, 100, "importante", true);
+         Salle s5 = new Salle(5, 120, "importante", true);
+         Salle s6 = new Salle(6, 20, "simple", true);
          salles.put(s1.getNumeroSalle(), s1);
          salles.put(s2.getNumeroSalle(), s2);
          salles.put(s3.getNumeroSalle(), s3);
@@ -52,46 +60,35 @@ public class SalleSingleton {
          salles.put(s6.getNumeroSalle(), s6);
     }
         
-    public Salle réserverSalle(int capacitéMax, String typePrestation) {
-        int numeroSalle = 0;
-        switch (numeroSalle) {
-            
-            case 2 :
-                if (capacitéMax <= 100 && (typePrestation == "cocktail" || typePrestation == "lunch"));
-                break;
-                
-            case 1 :
-                 if (capacitéMax >100 && capacitéMax <= 150 && (typePrestation == "cocktail" || typePrestation == "lunch"));
-                break;
-                
-            case 3 :
-                 if (capacitéMax >150 && capacitéMax <= 300 && (typePrestation == "cocktail" || typePrestation == "lunch"));
-                break;
-            
-            case 4 :
-                 if (capacitéMax <= 150 && typePrestation == "repasAssis");
-                break;
-              
-                
-            case 5 :
-                 if (capacitéMax >150 && capacitéMax <= 300 && typePrestation == "repasAssis");
-                break;
-                
-                
-            case 6 :
-                 if (capacitéMax >100 && capacitéMax <= 150 && (typePrestation == "cocktail" || typePrestation == "lunch"));
-                break;
+    public Salle recupererSalleDispo(Date d, int capacite, String typePrestation) throws SalleException {
+        // Récupération de la liste des salles 
+        HashMap<Integer, Salle> salleDispo = (HashMap<Integer, Salle>) salles.clone();
+        Iterator itSalle = salleDispo.entrySet().iterator();
+        
+        // boolean qui permet de vérifier si on a trouvé une salle
+        boolean salleTrouve = false;
+        // salle trouvé et valide
+        Salle salleCourante = null;
+        // On regarde pour chaque salle si elle est dispo ou non
+        while(!salleTrouve){
+            if(!itSalle.hasNext()){
+                throw new SalleException("Plus de salle disponible à la salle "+d);
+            }
+            Map.Entry pair = (Map.Entry) itSalle.next();
+            salleCourante = (Salle) pair.getValue();
+            logger.log(Level.INFO, salleCourante.toString(), "Message");
+            if(salleCourante.isDisponible(d) && salleCourante.getCapacitéMax() > capacite){
+                // La salle correspond à la demande, on valide
+                salleTrouve = true;
+            }
         }
-        Salle s = salles.get(numeroSalle);
-        s.setDisponible(false);
-        MapMessage message = contextSalle.createMapMessage();
-        contextSalle.createProducer().send(queueSalle, s);
-        return s;
+        
+        return salleCourante;
     }
     
     public String annulerSalle(int numSalle){
         Salle s = salles.get(numSalle);
-        s.setDisponible(true);
+        //s.setDisponible(true);
         return "Salle annulée avec succès";
     }
     
