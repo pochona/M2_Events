@@ -36,6 +36,8 @@ public class ProjetSingleton {
 
     private final ArrayList<Projet> projets = new ArrayList<>();
     
+    
+    
     public Projet demanderPrestation(Projet p) {
         projets.add(p);
         ObjectMessage message = contextProjet.createObjectMessage(p);
