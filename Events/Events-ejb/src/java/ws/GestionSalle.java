@@ -7,16 +7,12 @@ package ws;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-import javax.inject.Inject;
-import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-import javax.jms.Topic;
 import messages.Nommage;
 import messages.Projet;
 
@@ -25,30 +21,24 @@ import messages.Projet;
  * @author Amaury_PC
  */
 @MessageDriven(activationConfig = {
-    @ActivationConfigProperty(propertyName = "clientId", propertyValue = Nommage.TOPIC_DEMANDE)
+    @ActivationConfigProperty(propertyName = "clientId", propertyValue = Nommage.TOPIC_PROJET)
     ,
-        @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = Nommage.TOPIC_DEMANDE)
+        @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = Nommage.TOPIC_PROJET)
     ,
-        @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = Nommage.TOPIC_DEMANDE)
+        @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = Nommage.TOPIC_PROJET)
     ,
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic")
 })
-public class GestionProjet implements MessageListener {
+public class GestionSalle implements MessageListener {
     
-    @Inject
-    private JMSContext context;
+    static final Logger logger = Logger.getLogger("GestionSalle");
     
-    @Resource(mappedName = Nommage.TOPIC_PROJET)
-    private Topic topicReponse;
-    
-    static final Logger logger = Logger.getLogger("GestionProjet");
-    
-    public GestionProjet() {
+    public GestionSalle() {
     }
     
     @Override
     public void onMessage(Message message) {
-        logger.log(Level.INFO, "Message reçu GestionProjet", "Message");
+        logger.log(Level.INFO, "Message reçu Gestion Salle", "Message");
         if (message instanceof ObjectMessage) {
              try {
                  ObjectMessage om = (ObjectMessage) message;
@@ -57,14 +47,15 @@ public class GestionProjet implements MessageListener {
                     // Récupération d'un objet projet
                     Projet projet = (Projet) obj;
 
+
                     // Traitement
 
 
-                    // Transmission au Topic Projet
-                    context.createProducer().send(topicReponse, projet);
+                    // 
+                    
                  }
              } catch (JMSException ex) {
-                 Logger.getLogger(GestionProjet.class.getName()).log(Level.SEVERE, null, ex);
+                 Logger.getLogger(GestionSalle.class.getName()).log(Level.SEVERE, null, ex);
              }
         }
     }

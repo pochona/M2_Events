@@ -25,8 +25,6 @@ import messages.Projet;
     ,
         @ActivationConfigProperty(propertyName = "destinationLookup", propertyValue = Nommage.TOPIC_PROJET)
     ,
-        @ActivationConfigProperty(propertyName = "subscriptionDurability", propertyValue = "Durable")
-    ,
         @ActivationConfigProperty(propertyName = "subscriptionName", propertyValue = Nommage.TOPIC_PROJET)
     ,
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic")
