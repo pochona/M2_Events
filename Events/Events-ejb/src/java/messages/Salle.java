@@ -21,10 +21,16 @@ public class Salle implements Serializable {
     private boolean estrade;
     private ArrayList<Date> occupation;
     
+    public static String SIMPLE = "Simple";
+    public static String IMPORTANT = "Important";
+    
+    public static boolean ESTRADE = true;
+    public static boolean NON_ESTRADE = false;
+    
     public Salle(int numeroSalle, int capacitéMax, String typeCuisine, boolean estrade){
         this.numeroSalle = numeroSalle;
         this.capacitéMax = capacitéMax;
-        this.typeCuisine = typeCuisine; //ENUM ? simple/importante
+        this.typeCuisine = typeCuisine;
         this.occupation = new ArrayList<Date>();
         
     }
@@ -73,6 +79,14 @@ public class Salle implements Serializable {
 
     public void setCapacitéMax(int capacitéMax) {
         this.capacitéMax = capacitéMax;
+    }
+    
+    public String afficheOccupation(){
+        String s = "Salle n°"+this.numeroSalle+". Occupé le :";
+        for(Date d: occupation){
+            s += " - " +d;
+        }
+        return s;
     }
 
     public String toString(){

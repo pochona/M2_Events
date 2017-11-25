@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -40,24 +41,25 @@ public class SalleSingleton {
     @EJB
     ProjetSingleton projet;
     
-    private final HashMap<Integer, Salle> salles;
+    private HashMap<Integer, Salle> salles;
  
     static final Logger logger = Logger.getLogger("SalleSingleton");
     
-    public SalleSingleton() {
+   @PostConstruct
+    public void initialiser(){
         salles = new HashMap<>();
-         Salle s1 = new Salle(1, 50, "simple", false);
-         Salle s2 = new Salle(2, 30, "simple", false);
-         Salle s3 = new Salle(3, 60, "simple", true);
-         Salle s4 = new Salle(4, 100, "importante", true);
-         Salle s5 = new Salle(5, 120, "importante", true);
-         Salle s6 = new Salle(6, 20, "simple", true);
-         salles.put(s1.getNumeroSalle(), s1);
-         salles.put(s2.getNumeroSalle(), s2);
-         salles.put(s3.getNumeroSalle(), s3);
-         salles.put(s4.getNumeroSalle(), s4);
-         salles.put(s5.getNumeroSalle(), s5);
-         salles.put(s6.getNumeroSalle(), s6);
+        Salle s1 = new Salle(1, 50, Salle.SIMPLE, Salle.NON_ESTRADE);
+        Salle s2 = new Salle(2, 30, Salle.SIMPLE, Salle.NON_ESTRADE);
+        Salle s3 = new Salle(3, 60, Salle.SIMPLE, Salle.ESTRADE);
+        Salle s4 = new Salle(4, 100, Salle.IMPORTANT, Salle.ESTRADE);
+        Salle s5 = new Salle(5, 120, Salle.IMPORTANT, Salle.ESTRADE);
+        Salle s6 = new Salle(6, 20, Salle.SIMPLE, Salle.ESTRADE);
+        salles.put(s1.getNumeroSalle(), s1);
+        salles.put(s2.getNumeroSalle(), s2);
+        salles.put(s3.getNumeroSalle(), s3);
+        salles.put(s4.getNumeroSalle(), s4);
+        salles.put(s5.getNumeroSalle(), s5);
+        salles.put(s6.getNumeroSalle(), s6);
     }
         
     public Salle recupererSalleDispo(Date d, int capacite, String typePrestation) throws SalleException {
@@ -76,7 +78,8 @@ public class SalleSingleton {
             }
             Map.Entry pair = (Map.Entry) itSalle.next();
             salleCourante = (Salle) pair.getValue();
-            logger.log(Level.INFO, salleCourante.toString(), "Message");
+            
+            logger.log(Level.INFO, salleCourante.afficheOccupation(), "Message");
             if(salleCourante.isDisponible(d) && salleCourante.getCapacitéMax() > capacite){
                 // La salle correspond à la demande, on valide
                 salleTrouve = true;

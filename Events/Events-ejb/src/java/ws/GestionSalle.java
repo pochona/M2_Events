@@ -9,6 +9,7 @@ import exception.SalleException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -33,6 +34,9 @@ import singleton.SalleSingleton;
         @ActivationConfigProperty(propertyName = "destinationType", propertyValue = "javax.jms.Topic")
 })
 public class GestionSalle implements MessageListener {
+
+    @EJB
+    private SalleSingleton salleSingleton;
     
     static final Logger logger = Logger.getLogger("GestionSalle");
     
@@ -49,14 +53,13 @@ public class GestionSalle implements MessageListener {
                  if (obj instanceof Projet) {
                     // Récupération d'un objet projet
                     Projet projet = (Projet) obj;
+                     // Traitement
 
 
-                    // Traitement
-                    SalleSingleton s = new SalleSingleton();
                     Salle salle;
                     // On essaye de récuperer une salle dispo
                     try {
-                        salle = s.recupererSalleDispo(projet.getDate(), projet.getParticipants(), projet.getType_manif());
+                        salle = salleSingleton.recupererSalleDispo(projet.getDate(), projet.getParticipants(), projet.getType_manif());
                         salle.setOccupation(projet.getDate());
                         logger.log(Level.INFO, "Salle dispo : " + salle, "Message");
                         projet.setSalle(salle);
