@@ -6,6 +6,7 @@
 package singleton;
 
 import exception.SalleException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ import javax.inject.Inject;
 import javax.jms.JMSContext;
 import javax.jms.MapMessage;
 import javax.jms.Queue;
+import messages.Projet;
 import messages.Salle;
 
 
@@ -71,21 +73,45 @@ public class SalleSingleton {
         boolean salleTrouve = false;
         // salle trouvé et valide
         Salle salleCourante = null;
+        // Permet de retenir une salle temporairement pour privilégier les salles à cuisine simple pour les petits projets
+        Salle salleTrouveTemp = null;
         // On regarde pour chaque salle si elle est dispo ou non
         while(!salleTrouve){
+            // Si je n'ai pas de salle suivante et que je n'ai pas encore trouvé de salle, je sors en exception
             if(!itSalle.hasNext()){
-                throw new SalleException("Plus de salle disponible à la salle "+d);
-            }
-            Map.Entry pair = (Map.Entry) itSalle.next();
-            salleCourante = (Salle) pair.getValue();
-            
-            logger.log(Level.INFO, salleCourante.afficheOccupation(), "Message");
-            if(salleCourante.isDisponible(d) && salleCourante.getCapacitéMax() > capacite){
-                // La salle correspond à la demande, on valide
-                salleTrouve = true;
+                // Sauf si j'ai une salle temporaire : salle tempo = salle avec une grande cuisine, pour un petit projet (donc pas idéal mais suffisant)
+                if(salleTrouveTemp != null){
+                    salleTrouve = true;
+                    salleCourante = salleTrouveTemp;
+                } else {
+                    // sinon, je n'ai vraiment pas de salle, donc je sors...
+                    throw new SalleException("Plus de salle disponible à la date "+new SimpleDateFormat("dd-MM-yyyy").format(d));
+                }
+            } else {
+                // J'ai encore des salles à parcourir, donc je fais le traitement normal : salle suivante puis traitement dessus selon l'event
+                Map.Entry pair = (Map.Entry) itSalle.next();
+                salleCourante = (Salle) pair.getValue();
+
+                // On filtre déjà sur la date et sur la taille de la salle
+                if(salleCourante.isDisponible(d) && salleCourante.getCapacitéMax() > capacite){
+                    // ensuite, si on est dans un projet "Repas assis", il nous faut une salle imporante
+                    if(typePrestation.equals(Projet.PRESTA_REPAS)){
+                        if(salleCourante.hasCuisineImportante()){
+                            // La salle correspond à la demande, on valide
+                            salleTrouve = true;
+                        }
+                    } else {
+                        // C'est un projet simple : donc je peux prendre une grande salle, mais je dois privilégier une petite (cuisine simple / importante)
+                        if(salleCourante.hasCuisineSimple()){
+                            // si c'est une cuisine simple, je prends directement sans recherche supplémentaire
+                            salleTrouve = true;
+                        } else {
+                            salleTrouveTemp = salleCourante;
+                        }
+                    }
+                }
             }
         }
-        
         return salleCourante;
     }
     

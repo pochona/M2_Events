@@ -15,6 +15,9 @@ import java.util.Date;
  */
 public class Projet implements Serializable {
     
+    public static String PRESTA_COCKTAIL = "Cocktail seul";
+    public static String PRESTA_LUNCH = "Lunch";
+    public static String PRESTA_REPAS = "Repas assis";
 
     private String nom;
     private String coord;

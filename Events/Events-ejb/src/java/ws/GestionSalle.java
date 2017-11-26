@@ -8,13 +8,18 @@ package ws;
 import exception.SalleException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
+import javax.inject.Inject;
+import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Topic;
 import messages.Nommage;
 import messages.Projet;
 import messages.Salle;
@@ -38,6 +43,12 @@ public class GestionSalle implements MessageListener {
     @EJB
     private SalleSingleton salleSingleton;
     
+    @Inject
+    private JMSContext context;
+    
+    @Resource(mappedName = Nommage.QUEUE_SALLE)
+    private Queue queueReponse;
+    
     static final Logger logger = Logger.getLogger("GestionSalle");
     
     public GestionSalle() {
@@ -54,25 +65,29 @@ public class GestionSalle implements MessageListener {
                     // Récupération d'un objet projet
                     Projet projet = (Projet) obj;
                      // Traitement
-
-
-                    Salle salle;
-                    // On essaye de récuperer une salle dispo
-                    try {
-                        salle = salleSingleton.recupererSalleDispo(projet.getDate(), projet.getParticipants(), projet.getType_manif());
-                        salle.setOccupation(projet.getDate());
-                        logger.log(Level.INFO, "Salle dispo : " + salle, "Message");
-                        projet.setSalle(salle);
-                    } catch (SalleException ex) {
-                        logger.log(Level.INFO, ex.toString());
-                    }
+                     this.traiterResaSalle(projet);
                     
-                    // 
+                    // Retour au gestionnaire projet
+                    context.createProducer().send(queueReponse, projet.getSalle());
+                    
                     
                  }
              } catch (JMSException ex) {
                  Logger.getLogger(GestionSalle.class.getName()).log(Level.SEVERE, null, ex);
              }
+        }
+    }
+    
+    public void traiterResaSalle(Projet projet){
+        Salle salle;
+        // On essaye de récuperer une salle dispo
+        try {
+            salle = salleSingleton.recupererSalleDispo(projet.getDate(), projet.getParticipants(), projet.getType_manif());
+            salle.setOccupation(projet.getDate());
+            logger.log(Level.INFO, "Salle dispo : " + salle, "Message");
+            projet.setSalle(salle);
+        } catch (SalleException ex) {
+            logger.log(Level.INFO, ex.toString());
         }
     }
     

@@ -6,6 +6,7 @@
 package messages;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -56,6 +57,14 @@ public class Salle implements Serializable {
     public boolean isDisponible(Date d) {
         return !this.occupation.contains(d);
     }
+    
+    public boolean hasCuisineImportante() {
+        return this.typeCuisine.equals(Salle.IMPORTANT);
+    }
+    
+    public boolean hasCuisineSimple() {
+        return this.typeCuisine.equals(Salle.SIMPLE);
+    }
 
     public int getNumeroSalle() {
         return numeroSalle;
@@ -84,7 +93,7 @@ public class Salle implements Serializable {
     public String afficheOccupation(){
         String s = "Salle n°"+this.numeroSalle+". Occupé le :";
         for(Date d: occupation){
-            s += " - " +d;
+            s += " - " +new SimpleDateFormat("dd-MM-yyyy").format(d);
         }
         return s;
     }
