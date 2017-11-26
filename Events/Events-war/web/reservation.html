@@ -29,22 +29,22 @@
 
 	                <div class="form-group">
 	                    <label>Nom</label>
-	                    <input id="textinput" name="textinput"  type="text" placeholder="Nom" class="form-control input-md"  ng-model="reservation.nom">
+	                    <input id="textinput" name="textinput"  type="text" placeholder="Saisir votre nom" class="form-control input-md"  ng-model="reservation.nom" required>
 	                </div>
 
 	                <div class="form-group">
-	                    <label>Coordonnées</label>
-	                    <input id="textinput" name="textinput"  type="text" placeholder="Coordonnées" class="form-control input-md"  ng-model="reservation.coord">
+	                    <label>Adresse</label>
+	                    <input id="textinput" name="textinput"  type="text" placeholder="Saisir votre adresse" class="form-control input-md"  ng-model="reservation.coord" required>
 	                </div>
 
 	                <div class="form-group">
-	                    <label>Appellation manifestation</label>
-	                    <input id="textinput" name="textinput"  type="text" placeholder="Manifestation" class="form-control input-md"  ng-model="reservation.manif">
+	                    <label>Nom de l'évènement</label>
+	                    <input id="textinput" name="textinput"  type="text" placeholder="Saisir le nom de l'évènement" class="form-control input-md"  ng-model="reservation.manif" required>
 	                </div>
 
 	                <div class="form-group">
-	                    <label>Type de manifestation</label>
-	                    <md-select ng-model="reservation.type_manif" placeholder="Type">
+	                    <label>Type d'évènement</label>
+	                    <md-select ng-model="reservation.type_manif" placeholder="Choisir le type d'évènement" required>
 	                        <md-option value="familiale">Familiale</md-option>
 	                        <md-option value="associative">Associative</md-option>
 	                        <md-option value="professionnelle">Professionnelle</md-option>
@@ -56,14 +56,14 @@
 	                    <input id="textinput" name="textinput"  type="number" placeholder="Nombre de participants" class="form-control input-md"  ng-model="reservation.participants">
 	                </div>
 
-	                <div class="form-group">
+	                <div class="form-group" >
 	                    <label>Date réservation</label>
-	                    <md-datepicker ng-model="reservation.date" md-placeholder="Choisissez date"></md-datepicker>
+	                    <md-datepicker ng-model="reservation.date" md-placeholder="Choisissez date" required></md-datepicker>
 	                </div>
 
 	                 <div class="form-group">
 	                    <label>Tranche horaire début</label>
-	                    <md-radio-group ng-model="reservation.tranche_deb">
+	                    <md-radio-group ng-model="reservation.tranche_deb" required>
 	                      <md-radio-button value="11h" class="md-primary">11h</md-radio-button>
 	                      <md-radio-button value="18h">18h</md-radio-button>
 	                    </md-radio-group>
@@ -71,15 +71,15 @@
 
 	                <div class="form-group">
 	                    <label>Tranche horaire Fin :</label>
-	                    <md-radio-group ng-model="reservation.tranche_fin">
+	                    <md-radio-group ng-model="reservation.tranche_fin" required>
 	                      <md-radio-button value="00h" class="md-primary">00h</md-radio-button>
 	                      <md-radio-button value="03h">03h</md-radio-button>
 	                    </md-radio-group>
 	                </div>
 
 	                <div class="form-group">
-	                    <label>Type de prestation(s)</label>
-	                    <md-select ng-model="reservation.type_presta" placeholder="Type de préstation">
+	                    <label>Type de prestation</label>
+	                    <md-select ng-model="reservation.type_presta" placeholder="Choisir le type de préstation" required>
 	                        <md-option value="cocktail_seul">Cocktail seul</md-option>
 	                        <md-option value="lunch">Lunch</md-option>
 	                        <md-option value="repas_assis">Repas assis</md-option>

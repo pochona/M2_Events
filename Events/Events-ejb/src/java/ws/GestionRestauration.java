@@ -73,8 +73,8 @@ public class GestionRestauration implements MessageListener {
     }
     
        private static boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
-        app.Traiteur_Service service = new app.Traiteur_Service();
-        app.Traiteur port = service.getTraiteurPort();
+        soap.Traiteur_Service service = new soap.Traiteur_Service();
+        soap.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
@@ -82,8 +82,8 @@ public class GestionRestauration implements MessageListener {
     }
     
      private static boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
-        app.Traiteur_Service service = new app.Traiteur_Service();
-        app.Traiteur port = service.getTraiteurPort();
+        soap.Traiteur_Service service = new soap.Traiteur_Service();
+        soap.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);

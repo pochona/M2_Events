@@ -6,8 +6,8 @@
 
 var app = angular.module('eventApp', ['ngMaterial']);
 
-var port = "8080";
-var project = "Events-war"
+var port = "16569";
+var project = "Events-war";
 var baseUrl = "http://localhost:"+port+"/"+project;
 
 app.controller('AppCtrl', function() {
