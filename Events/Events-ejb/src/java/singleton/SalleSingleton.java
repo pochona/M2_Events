@@ -93,7 +93,7 @@ public class SalleSingleton {
                 salleCourante = (Salle) pair.getValue();
 
                 // On filtre déjà sur la date et sur la taille de la salle
-                if(salleCourante.isDisponible(d) && salleCourante.getCapacitéMax() > capacite){
+                if(salleCourante.isDisponible(d) && salleCourante.getCapacitéMax() >= capacite){
                     // ensuite, si on est dans un projet "Repas assis", il nous faut une salle imporante
                     if(typePrestation.equals(Projet.PRESTA_REPAS)){
                         if(salleCourante.hasCuisineImportante()){

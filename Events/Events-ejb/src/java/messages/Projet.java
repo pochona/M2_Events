@@ -8,6 +8,7 @@ package messages;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  *
@@ -15,10 +16,11 @@ import java.util.Date;
  */
 public class Projet implements Serializable {
     
-    public static String PRESTA_COCKTAIL = "Cocktail seul";
-    public static String PRESTA_LUNCH = "Lunch";
-    public static String PRESTA_REPAS = "Repas assis";
-
+    public static String PRESTA_COCKTAIL = "cocktail_seul";
+    public static String PRESTA_LUNCH = "lunch";
+    public static String PRESTA_REPAS = "repas_assis";
+    
+    private String reference;
     private String nom;
     private String coord;
     private String manif;
@@ -35,19 +37,12 @@ public class Projet implements Serializable {
     private Boolean champagne;
     private Boolean rouge;
     
-    private String refProjet;
-    
     private Salle salle;
     private ArrayList<Employe> employes;
-    
-        public Projet (String refProjet, String nom, int nbParticipant){
-        this.refProjet = refProjet;
-        this.nom = nom;
-        this.date = new Date();
-        this.participants = nbParticipant;
-    }
+
 
     public Projet(String nom, String coord, String manif, String type_manif, int participants, Date date, String tranche_deb, String tranche_fin, String type_presta, Boolean cocktail_prepare, Boolean trois_aperitifs, Boolean blanc_sec, Boolean cremant, Boolean champagne, Boolean rouge) {
+        this.reference = UUID.randomUUID().toString();
         this.nom = nom;
         this.coord = coord;
         this.manif = manif;
@@ -126,6 +121,10 @@ public class Projet implements Serializable {
         this.champagne = champagne;
     }
 
+    public String getReference(){
+        return this.reference;
+    }
+    
     public String getNom() {
         return nom;
     }

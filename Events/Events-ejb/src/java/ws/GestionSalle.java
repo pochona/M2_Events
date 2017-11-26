@@ -82,7 +82,7 @@ public class GestionSalle implements MessageListener {
         Salle salle;
         // On essaye de récuperer une salle dispo
         try {
-            salle = salleSingleton.recupererSalleDispo(projet.getDate(), projet.getParticipants(), projet.getType_manif());
+            salle = salleSingleton.recupererSalleDispo(projet.getDate(), projet.getParticipants(), projet.getType_presta());
             salle.setOccupation(projet.getDate());
             logger.log(Level.INFO, "Salle dispo : " + salle, "Message");
             projet.setSalle(salle);
