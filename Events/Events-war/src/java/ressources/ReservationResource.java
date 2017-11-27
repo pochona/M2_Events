@@ -5,6 +5,7 @@
  */
 package ressources;
 
+import com.google.gson.Gson;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,10 +53,12 @@ public class ReservationResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response postJson(Projet p) {
+    public String postJson(Projet p) {
         Projet p1 = returnProjet(p);
-        projetSingleton.demanderPrestation(p1);
-        return Response.noContent().build();
+        String str = projetSingleton.demanderPrestation(p1);
+        Gson g = new Gson();
+        String json = g.toJson(str);
+        return json;
     }
     
     public Projet returnProjet(Projet p) {

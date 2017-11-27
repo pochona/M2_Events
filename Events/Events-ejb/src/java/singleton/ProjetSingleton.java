@@ -38,11 +38,12 @@ public class ProjetSingleton {
     
     
     
-    public Projet demanderPrestation(Projet p) {
+    public String demanderPrestation(Projet p) {
         projets.add(p);
         ObjectMessage message = contextProjet.createObjectMessage(p);
         contextProjet.createProducer().send(topicProjet, p);
-        return p;
+        System.out.println("ref = " + p.getReference());
+        return p.getReference();
     }
     
     public String annulerPrestation(String ref){
