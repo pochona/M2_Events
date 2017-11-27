@@ -42,7 +42,6 @@ public class Projet implements Serializable {
 
 
     public Projet(String nom, String coord, String manif, String type_manif, int participants, Date date, String tranche_deb, String tranche_fin, String type_presta, Boolean cocktail_prepare, Boolean trois_aperitifs, Boolean blanc_sec, Boolean cremant, Boolean champagne, Boolean rouge) {
-        this.reference = UUID.randomUUID().toString();
         this.nom = nom;
         this.coord = coord;
         this.manif = manif;
@@ -64,7 +63,17 @@ public class Projet implements Serializable {
     public Projet() {
      
     }
+    
+    // Permet d'attribuer un ID unique au projet
+    public void attribuerReference(){
+        this.reference = UUID.randomUUID().toString();
+    }
 
+    // Verifier si un projet possède une salle
+    public boolean hasSalle(){
+        return this.salle != null;
+    }
+    
     public void setNom(String nom) {
         this.nom = nom;
     }

@@ -24,6 +24,7 @@ import messages.Nommage;
 import messages.Projet;
 import messages.Salle;
 import singleton.SalleSingleton;
+import static ws.GestionRestauration.logger;
 
 /**
  *
@@ -64,13 +65,15 @@ public class GestionSalle implements MessageListener {
                  if (obj instanceof Projet) {
                     // Récupération d'un objet projet
                     Projet projet = (Projet) obj;
-                     // Traitement
-                     this.traiterResaSalle(projet);
+                    // On traite uniquement si on a pas de salle : à voir pour traiter avec un type message
+                    if(!projet.hasSalle()){
+                        logger.log(Level.INFO, "G. Salle "  + projet.getReference(), "Message");
+                        // Traitement
+                        this.traiterResaSalle(projet);
                     
-                    // Retour au gestionnaire projet
-                    context.createProducer().send(queueReponse, projet.getSalle());
-                    
-                    
+                        // Retour au gestionnaire projet
+                        context.createProducer().send(queueReponse, projet);
+                    }
                  }
              } catch (JMSException ex) {
                  Logger.getLogger(GestionSalle.class.getName()).log(Level.SEVERE, null, ex);

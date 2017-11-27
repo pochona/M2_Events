@@ -9,12 +9,17 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.inject.Inject;
+import javax.jms.JMSContext;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Topic;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -38,12 +43,17 @@ public class GestionRestauration implements MessageListener {
     
     static final Logger logger = Logger.getLogger("GestionRestauration");
     
+    @Inject
+    private JMSContext context;
+    
+    @Resource(mappedName = Nommage.TOPIC_CONFIRMATION)
+    private Topic topicReponse;
+    
     public GestionRestauration() {
     }
     
     @Override
     public void onMessage(Message message) {
-        logger.log(Level.INFO, "Message reçu Gestion Restauration : "  + message, "Message");
         if (message instanceof ObjectMessage) {
              try {
                  ObjectMessage om = (ObjectMessage) message;
@@ -51,27 +61,31 @@ public class GestionRestauration implements MessageListener {
                  if (obj instanceof Projet) {
                     // Récupération d'un objet projet
                     Projet projet = (Projet) obj;
+                    if(projet.hasSalle()){
+                        logger.log(Level.INFO, "G. Restauration "  + projet.getReference(), "Message");
 
-
-                    // Traitement
-
-                    if (reserverTraiteur(projet.getManif(), projet.getDate(), projet.getParticipants())){
-                        logger.log(Level.INFO, "Traiteur  reservé ");
+                        // Traitement
+                        /*
+                        if (reserverTraiteur(projet.getManif(), projet.getDate(), projet.getParticipants())){
+                            logger.log(Level.INFO, "Traiteur  reservé ");
+                        }
+                        else {
+                            logger.log(Level.INFO, "Traiteur  occupé ");
+                        }
+                        // 
+                        */
+                        // Retour dans Confirmation
+                        context.createProducer().send(topicReponse, projet);
                     }
-                    else {
-                        logger.log(Level.INFO, "Traiteur  occupé ");
-                    }
-                    // 
-                    
                  }
              } catch (JMSException ex) {
                  Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
-             } catch (DatatypeConfigurationException ex) {
-                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
+            /* } catch (DatatypeConfigurationException ex) {
+                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);*/
             }
         }
     }
-    
+    /*
        private static boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
         app.Traiteur_Service service = new app.Traiteur_Service();
         app.Traiteur port = service.getTraiteurPort();
@@ -88,6 +102,6 @@ public class GestionRestauration implements MessageListener {
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         return port.annulerTraiteur(refProjet, date2);
-    }
+    }*/
     
 }
