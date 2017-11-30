@@ -5,12 +5,13 @@
  */
 package ws;
 
+import exception.TraiteurExterneException;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.inject.Inject;
 import javax.jms.JMSContext;
@@ -18,13 +19,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
-import javax.jms.Queue;
 import javax.jms.Topic;
 import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
 import messages.Nommage;
 import messages.Projet;
+import singleton.BoissonsSingleton;
 
 /**
  *
@@ -42,6 +41,9 @@ import messages.Projet;
 public class GestionRestauration implements MessageListener {
     
     static final Logger logger = Logger.getLogger("GestionRestauration");
+    
+    @EJB
+    private BoissonsSingleton boissonsSingleton;
     
     @Inject
     private JMSContext context;
@@ -64,16 +66,13 @@ public class GestionRestauration implements MessageListener {
                     if(projet.hasSalle()){
                         logger.log(Level.INFO, "G. Restauration "  + projet.getReference(), "Message");
 
-                        // Traitement
-                        /*
-                        if (reserverTraiteur(projet.getManif(), projet.getDate(), projet.getParticipants())){
-                            logger.log(Level.INFO, "Traiteur  reservé ");
+                        try {
+                            // Traitement
+                            this.traiterRestauration(projet);
+                        } catch (TraiteurExterneException ex) {
+                            Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        else {
-                            logger.log(Level.INFO, "Traiteur  occupé ");
-                        }
-                        // 
-                        */
+                        
                         // Retour dans Confirmation
                         context.createProducer().send(topicReponse, projet);
                     }
@@ -85,8 +84,8 @@ public class GestionRestauration implements MessageListener {
             }
         }
     }
-    /*
-       private static boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
+    
+       private boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
         app.Traiteur_Service service = new app.Traiteur_Service();
         app.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
@@ -95,13 +94,31 @@ public class GestionRestauration implements MessageListener {
         return port.reserverTraiteur(refProjet, date2, participants);
     }
     
-     private static boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
+     private boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
         app.Traiteur_Service service = new app.Traiteur_Service();
         app.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
         return port.annulerTraiteur(refProjet, date2);
-    }*/
+    }
+    
+    public void traiterRestauration(Projet p) throws TraiteurExterneException{
+        // On vérifie le type de manifestation : si lunch ou cocktail, on traite en interne
+        if(p.getType_presta().equals(Projet.PRESTA_COCKTAIL) || p.getType_presta().equals(Projet.PRESTA_LUNCH)){
+            boissonsSingleton.reserverBoissons(p);
+        } else {
+            try {
+                // on est de type repas Assis, on va donc demander une réservation au traiteur externe via SOAP
+                if (reserverTraiteur(p.getManif(), p.getDate(), p.getParticipants())){
+                    logger.log(Level.INFO, "Traiteur  reservé ");
+                } else {
+                    throw new TraiteurExterneException(p);
+                }
+            } catch (DatatypeConfigurationException ex) {
+                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     
 }

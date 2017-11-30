@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,6 +44,24 @@ public class Projet implements Serializable {
 
 
     public Projet(String nom, String coord, String manif, String type_manif, int participants, Date date, String tranche_deb, String tranche_fin, String type_presta, Boolean cocktail_prepare, Boolean trois_aperitifs, Boolean blanc_sec, Boolean cremant, Boolean champagne, Boolean rouge) {
+       /*
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "nom "+ nom, nom);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "coord "+ coord, coord);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "manif "+ manif, manif);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "type_manif "+ type_manif, type_manif);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "participants "+ participants, participants);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "date "+ date, date);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "tranche_deb "+ tranche_deb, tranche_deb);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "tranche_fin "+ tranche_fin, tranche_fin);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "type_presta "+ type_presta, type_presta);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "cocktail_prepare "+ cocktail_prepare, cocktail_prepare);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "trois_aperitifs "+ trois_aperitifs, trois_aperitifs);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "blanc_sec "+ blanc_sec, blanc_sec);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "cremant "+ cremant, cremant);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "champagne "+ champagne, champagne);
+        Logger.getLogger(Projet.class.getName()).log(Level.INFO, "rouge "+ rouge, rouge);
+        */
+                
         this.nom = nom;
         this.coord = coord;
         this.manif = manif;
@@ -212,6 +232,22 @@ public class Projet implements Serializable {
 
     public void setEmployes(ArrayList<Employe> employes) {
         this.employes = employes;
+    }
+    
+    public Boolean hasBlanc_sec() {
+        return blanc_sec != null && blanc_sec;
+    }
+
+    public Boolean hasCremant() {
+        return cremant != null && cremant;
+    }
+
+    public Boolean hasChampagne() {
+        return champagne != null && champagne;
+    }
+
+    public Boolean hasRouge() {
+        return rouge != null && rouge;
     }
     
     
