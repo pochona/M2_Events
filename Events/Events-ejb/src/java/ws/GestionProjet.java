@@ -27,7 +27,7 @@ public class GestionProjet implements GestionProjetLocal {
 
     @Override
     public void traiterAnnulation(Projet projet) {
-        //
+        projet.annuler();
     }
 
 }

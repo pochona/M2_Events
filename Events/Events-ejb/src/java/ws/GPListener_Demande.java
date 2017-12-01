@@ -40,7 +40,7 @@ public class GPListener_Demande implements MessageListener {
     private JMSContext context;
     
     @Resource(mappedName = Nommage.TOPIC_PROJET)
-    private Topic topicReponse;
+    private Topic topicProjet;
     
     @EJB
     private GestionProjetLocal gestionProjet;
@@ -51,25 +51,55 @@ public class GPListener_Demande implements MessageListener {
     }
     
     @Override
-    public void onMessage(Message message) {
-        if (message instanceof ObjectMessage) {
-             try {
-                 ObjectMessage om = (ObjectMessage) message;
-                 Object obj = om.getObject();
-                 if (obj instanceof Projet) {
-                    // Récupération d'un objet projet
-                    Projet projet = (Projet) obj;
-                    logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
-                    // Traitement
-                    gestionProjet.traiterDemande(projet);
-
-                    // Transmission au Topic Projet
-                    context.createProducer().send(topicReponse, projet);
-                 }
-             } catch (JMSException ex) {
-                 Logger.getLogger(GPListener_Demande.class.getName()).log(Level.SEVERE, null, ex);
-             }
+    public void onMessage(Message message) { 
+        try {
+            if(message.getJMSType().equals(Nommage.MSG_ANNULATION)){
+                this.traiterDemande(message);
+            } else {
+                this.traiterAnnulation(message);
+            }
+        } catch (JMSException ex) {
+            Logger.getLogger(GPListener_Demande.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void traiterDemande(Message message) throws JMSException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                // Traitement
+                gestionProjet.traiterDemande(projet);
+
+               // Transmission au Topic Projet
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_PROJET);
+                
+                // Transmission au Topic Projet
+                context.createProducer().send(topicProjet, m);
+            }
+       }
+    }
+    
+    public void traiterAnnulation(Message message) throws JMSException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                // Traitement
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_ANNULATION);
+
+                // Transmission au Topic Projet
+                context.createProducer().send(topicProjet, m);
+            }
+       }
     }
     
 }
