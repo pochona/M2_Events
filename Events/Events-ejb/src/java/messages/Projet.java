@@ -22,6 +22,10 @@ public class Projet implements Serializable {
     public static String PRESTA_LUNCH = "lunch";
     public static String PRESTA_REPAS = "repas_assis";
     
+    public static String STATUT_EN_COURS = "En cours";
+    public static String STATUT_EN_ERREUR = "En erreur";
+    public static String STATUT_ANNULE = "Annulé";
+    
     private String reference;
     private String nom;
     private String coord;
@@ -38,6 +42,7 @@ public class Projet implements Serializable {
     private Boolean cremant;
     private Boolean champagne;
     private Boolean rouge;
+    private String statut;
     
     private Salle salle;
     private ArrayList<Employe> employes;
@@ -77,6 +82,8 @@ public class Projet implements Serializable {
         this.cremant = cremant;
         this.champagne = champagne;
         this.rouge = rouge;
+        this.statut = Projet.STATUT_EN_COURS;
+        this.reference = UUID.randomUUID().toString();
     } 
 
   
@@ -88,9 +95,12 @@ public class Projet implements Serializable {
         return "Projet "+this.reference+ ", Nombre de personnes : "+this.participants;
     }
     
-    // Permet d'attribuer un ID unique au projet
-    public void attribuerReference(){
-        this.reference = UUID.randomUUID().toString();
+    public void annuler(){
+        this.statut = Projet.STATUT_ANNULE;
+    }
+    
+    public void erreur(){
+        this.statut = Projet.STATUT_EN_ERREUR;
     }
 
     // Verifier si un projet possède une salle
