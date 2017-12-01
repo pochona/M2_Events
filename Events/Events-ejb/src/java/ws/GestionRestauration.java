@@ -75,30 +75,11 @@ public class GestionRestauration implements MessageListener {
                         } catch (TraiteurExterneException ex) {
                             Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        Message m = context.createObjectMessage(projet);
+                        m.setJMSType(Nommage.MSG_PROJET);
                         
-                        // Retour dans Confirmation et propagation JMSType
-                        //Appel des méthodes SOAP de Traiteur
-                        if (message.getJMSType().equals(Nommage.MSG_PROJET))
-                        {
-                            try {
-                                reserverTraiteur(projet.getReference(), projet.getDate(), projet.getParticipants());
-                            } catch (DatatypeConfigurationException ex) {
-                                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            Message m = context.createObjectMessage(projet);
-                            m.setJMSType(Nommage.MSG_PROJET);
-                            context.createProducer().send(topicReponse, m);
-                        }
-                        else {
-                            try {
-                                annulerTraiteur(projet.getReference(), projet.getDate());
-                            } catch (DatatypeConfigurationException ex) {
-                                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                            Message m = context.createObjectMessage(projet);
-                            m.setJMSType(Nommage.MSG_ANNULATION);
-                            context.createProducer().send(topicReponse, m);
-                        } 
+                        // Retour dans Confirmation
+                        context.createProducer().send(topicReponse, m);
                     }
                  }
              } catch (JMSException ex) {
