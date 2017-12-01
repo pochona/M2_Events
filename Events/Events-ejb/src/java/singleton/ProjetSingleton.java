@@ -12,8 +12,10 @@ import javax.ejb.Singleton;
 import javax.ejb.LocalBean;
 import javax.inject.Inject;
 import javax.jms.JMSContext;
+import javax.jms.JMSException;
 import javax.jms.ObjectMessage;
 import javax.jms.Topic;
+import messages.Nommage;
 import messages.Projet;
 
 
@@ -38,16 +40,23 @@ public class ProjetSingleton {
     
     
     
-    public String demanderPrestation(Projet p) {
+    public String demanderPrestation(Projet p) throws JMSException {
         projets.add(p);
         ObjectMessage message = contextProjet.createObjectMessage(p);
+        message.setJMSType(Nommage.MSG_PROJET);
         contextProjet.createProducer().send(topicProjet, p);
-        System.out.println("ref = " + p.getReference());
         return p.getReference();
     }
     
-    public String annulerPrestation(String ref){
+    public String annulerPrestation(String ref) throws JMSException{
         projets.remove(projet);
+        ObjectMessage message = contextProjet.createObjectMessage(ref);
+        message.setJMSType(Nommage.MSG_ANNULATION);
+        contextProjet.createProducer().send(topicProjet, ref);
         return "Prestation annulée avec succès";
+    }
+    
+    public ArrayList retournerProjets() {
+        return projets;
     }
 }

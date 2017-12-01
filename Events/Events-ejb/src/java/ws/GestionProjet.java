@@ -17,7 +17,7 @@ public class GestionProjet implements GestionProjetLocal {
 
     @Override
     public void traiterDemande(Projet projet) {
-        projet.attribuerReference();
+        
     }
 
     @Override

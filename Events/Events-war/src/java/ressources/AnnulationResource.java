@@ -5,6 +5,7 @@
  */
 package ressources;
 
+import com.google.gson.Gson;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,9 +53,11 @@ public class AnnulationResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response postJson(String ref) {
-        projetSingleton.annulerPrestation(ref);
-        return Response.noContent().build();
+    public String postJson(String ref) {
+        String annulation = projetSingleton.annulerPrestation(ref);
+        Gson g = new Gson();
+        String json = g.toJson(annulation);
+        return json;
     }
    
     

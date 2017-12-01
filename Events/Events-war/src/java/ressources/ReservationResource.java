@@ -6,6 +6,7 @@
 package ressources;
 
 import com.google.gson.Gson;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,9 +43,8 @@ public class ReservationResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getJson() {
-        //TODO return proper representation object
-        throw new UnsupportedOperationException();
+    public ArrayList getJson() {
+        return projetSingleton.retournerProjets();
     }
 
    /**
