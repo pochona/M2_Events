@@ -6,6 +6,7 @@
 package singleton;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -38,12 +39,12 @@ public class ProjetSingleton {
     @EJB
     ProjetSingleton projet;
 
-    private final ArrayList<Projet> projets = new ArrayList<>();
+    private final HashMap<String, Projet> projets = new HashMap<String, Projet>();
     
     
     
     public String demanderPrestation(Projet p) {
-        projets.add(p);
+        projets.put(p.getReference(), p);
         ObjectMessage message = contextProjet.createObjectMessage(p);
         try {
             message.setJMSType(Nommage.MSG_PROJET);
@@ -55,7 +56,7 @@ public class ProjetSingleton {
     }
     
     public String annulerPrestation(String ref){
-        projets.remove(projet);
+        projets.remove(ref);
         ObjectMessage message = contextProjet.createObjectMessage(ref);
         try {
             message.setJMSType(Nommage.MSG_ANNULATION);
@@ -68,7 +69,7 @@ public class ProjetSingleton {
         return "Prestation annulée avec succès";
     }
     
-    public ArrayList retournerProjets() {
-        return projets;
+    public String retournerStatut(String ref) {
+        return projets.get(ref).getStatut();
     }
 }

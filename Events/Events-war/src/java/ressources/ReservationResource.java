@@ -43,8 +43,8 @@ public class ReservationResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public ArrayList getJson() {
-        return projetSingleton.retournerProjets();
+    public String getJson(String ref) {
+        return projetSingleton.retournerStatut(ref);
     }
 
    /**

@@ -43,7 +43,7 @@ public class Projet implements Serializable {
     private Boolean champagne;
     private Boolean rouge;
     private String statut;
-    
+
     private Salle salle;
     private ArrayList<Employe> employes;
 
@@ -263,6 +263,16 @@ public class Projet implements Serializable {
     public Boolean hasRouge() {
         return rouge != null && rouge;
     }
+    
+    
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+    
     
     
 }

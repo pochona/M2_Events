@@ -1,8 +1,7 @@
-
+<!DOCTYPE html>
 <html lang="fr" ng-app="eventApp">
-
     <head>
-        <title>Annulation réservation</title>
+        <title>Confirmation</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
@@ -21,22 +20,21 @@
 
         <!-- Angular Material Library -->
         <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
-
     </head>
     <body>
-	    <div class="col-sm-4 offset-sm-4 text-center">
-	    	<h2>Annuler une réservation</h2>
-	        
-		    <div class="info-form">
-		    	<form name"form" ng-controller="AnnulationCtrl" class="justify-content-center">
-		            <div class="form-group">
-		                <label>Saisir la référence de la réservation :</label>
-		                <input id="textinput" name="textinput"  type="text" placeholder="Référence réservation" class="form-control input-md"  ng-model="ref">
-		            </div>
-		                <button  class="btn btn-success" ng-click="deleteReservation()">Valider</button>
+       <div class="col-sm-4 offset-sm-4 text-center">
+            <h2>Statut d'une réservation</h2>
+            
+            <div class="info-form">
+                <form name"form" ng-controller="AnnulationCtrl" class="justify-content-center">
+                    <div class="form-group">
+                        <label>Saisir la référence de la réservation :</label>
+                        <input id="textinput" name="textinput"  type="text" placeholder="Référence réservation" class="form-control input-md"  ng-model="ref">
+                    </div>
+                        <button  class="btn btn-success" ng-click="verifReservation()">Valider</button>
 
-		    	</form>
-		    </div>
-		</div>
+                </form>
+            </div>
+        </div>
     </body>
 </html>
