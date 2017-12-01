@@ -7,6 +7,7 @@ package ws;
 
 import exception.TraiteurExterneException;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -21,6 +22,8 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 import javax.jms.Topic;
 import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 import messages.Nommage;
 import messages.Projet;
 import singleton.BoissonsSingleton;
@@ -72,9 +75,11 @@ public class GestionRestauration implements MessageListener {
                         } catch (TraiteurExterneException ex) {
                             Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
                         }
+                        Message m = context.createObjectMessage(projet);
+                        m.setJMSType(Nommage.MSG_PROJET);
                         
                         // Retour dans Confirmation
-                        context.createProducer().send(topicReponse, projet);
+                        context.createProducer().send(topicReponse, m);
                     }
                  }
              } catch (JMSException ex) {
@@ -86,8 +91,8 @@ public class GestionRestauration implements MessageListener {
     }
     
        private boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
-        app.Traiteur_Service service = new app.Traiteur_Service();
-        app.Traiteur port = service.getTraiteurPort();
+        soap.Traiteur_Service service = new soap.Traiteur_Service();
+        soap.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
@@ -95,8 +100,8 @@ public class GestionRestauration implements MessageListener {
     }
     
      private boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
-        app.Traiteur_Service service = new app.Traiteur_Service();
-        app.Traiteur port = service.getTraiteurPort();
+        soap.Traiteur_Service service = new soap.Traiteur_Service();
+        soap.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);

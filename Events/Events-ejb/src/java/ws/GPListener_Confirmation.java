@@ -52,6 +52,14 @@ public class GPListener_Confirmation implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
+        Projet pp = new Projet();
+        try {
+            logger.log(Level.INFO, "GP Confirmation "  + message.getJMSType(), "Message");
+            logger.log(Level.INFO, "GP Confirmation "  + message.getBody(Projet.class), "Message");
+        } catch (JMSException ex) {
+            Logger.getLogger(GPListener_Confirmation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         if (message instanceof ObjectMessage) {
              try {
                  ObjectMessage om = (ObjectMessage) message;

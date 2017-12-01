@@ -84,6 +84,10 @@ public class Projet implements Serializable {
      
     }
     
+    public String toString(){
+        return "Projet "+this.reference+ ", Nombre de personnes : "+this.participants;
+    }
+    
     // Permet d'attribuer un ID unique au projet
     public void attribuerReference(){
         this.reference = UUID.randomUUID().toString();
