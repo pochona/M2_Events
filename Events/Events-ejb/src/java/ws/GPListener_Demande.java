@@ -93,6 +93,8 @@ public class GPListener_Demande implements MessageListener {
                 Projet projet = (Projet) obj;
                 logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
                 // Traitement
+                gestionProjet.traiterAnnulation(projet);
+                
                 Message m = context.createObjectMessage(projet);
                 m.setJMSType(Nommage.MSG_ANNULATION);
 
