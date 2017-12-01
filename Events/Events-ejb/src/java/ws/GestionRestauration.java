@@ -75,11 +75,30 @@ public class GestionRestauration implements MessageListener {
                         } catch (TraiteurExterneException ex) {
                             Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        Message m = context.createObjectMessage(projet);
-                        m.setJMSType(Nommage.MSG_PROJET);
                         
-                        // Retour dans Confirmation
-                        context.createProducer().send(topicReponse, m);
+                        // Retour dans Confirmation et propagation JMSType
+                        //Appel des méthodes SOAP de Traiteur
+                        if (message.getJMSType().equals(Nommage.MSG_PROJET))
+                        {
+                            try {
+                                reserverTraiteur(projet.getReference(), projet.getDate(), projet.getParticipants());
+                            } catch (DatatypeConfigurationException ex) {
+                                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            Message m = context.createObjectMessage(projet);
+                            m.setJMSType(Nommage.MSG_PROJET);
+                            context.createProducer().send(topicReponse, m);
+                        }
+                        else {
+                            try {
+                                annulerTraiteur(projet.getReference(), projet.getDate());
+                            } catch (DatatypeConfigurationException ex) {
+                                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            Message m = context.createObjectMessage(projet);
+                            m.setJMSType(Nommage.MSG_ANNULATION);
+                            context.createProducer().send(topicReponse, m);
+                        } 
                     }
                  }
              } catch (JMSException ex) {
@@ -91,8 +110,8 @@ public class GestionRestauration implements MessageListener {
     }
     
        private boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
-        soap.Traiteur_Service service = new soap.Traiteur_Service();
-        soap.Traiteur port = service.getTraiteurPort();
+        app.Traiteur_Service service = new app.Traiteur_Service();
+        app.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
@@ -100,8 +119,8 @@ public class GestionRestauration implements MessageListener {
     }
     
      private boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
-        soap.Traiteur_Service service = new soap.Traiteur_Service();
-        soap.Traiteur port = service.getTraiteurPort();
+        app.Traiteur_Service service = new app.Traiteur_Service();
+        app.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
