@@ -6,6 +6,8 @@
 package singleton;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -40,18 +42,28 @@ public class ProjetSingleton {
     
     
     
-    public String demanderPrestation(Projet p) throws JMSException {
+    public String demanderPrestation(Projet p) {
         projets.add(p);
         ObjectMessage message = contextProjet.createObjectMessage(p);
-        message.setJMSType(Nommage.MSG_PROJET);
+        try {
+            message.setJMSType(Nommage.MSG_PROJET);
+        } catch (JMSException ex) {
+            Logger.getLogger(ProjetSingleton.class.getName()).log(Level.SEVERE, null, ex);
+        }
         contextProjet.createProducer().send(topicProjet, p);
         return p.getReference();
     }
     
-    public String annulerPrestation(String ref) throws JMSException{
+    public String annulerPrestation(String ref){
         projets.remove(projet);
         ObjectMessage message = contextProjet.createObjectMessage(ref);
-        message.setJMSType(Nommage.MSG_ANNULATION);
+        try {
+            message.setJMSType(Nommage.MSG_ANNULATION);
+        } catch (JMSException ex) {
+            Logger.getLogger(ProjetSingleton.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+        
         contextProjet.createProducer().send(topicProjet, ref);
         return "Prestation annulée avec succès";
     }
