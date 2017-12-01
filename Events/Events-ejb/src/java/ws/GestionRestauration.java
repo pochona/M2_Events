@@ -61,9 +61,9 @@ public class GestionRestauration implements MessageListener {
     @Override
     public void onMessage(Message message) {
         try {
-            if(message.getJMSType().equals(Nommage.MSG_PROJET)){
+            if(message.getJMSType().equals(Nommage.MSG_RESA_RESTAURATION)){
                 this.traiterDemande(message);
-            } else {
+            } else if(message.getJMSType().equals(Nommage.MSG_ANNUL_SALLE)){
                 this.traiterAnnulation(message);
             }
         } catch (JMSException ex) {
@@ -82,7 +82,7 @@ public class GestionRestauration implements MessageListener {
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
                 Projet projet = (Projet) obj;
-                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                logger.log(Level.INFO, "---Reservation restauration--- "  + projet.getReference(), "Message");
                 // Traitement
                 this.traiterRestauration(projet);
 
@@ -103,7 +103,7 @@ public class GestionRestauration implements MessageListener {
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
                 Projet projet = (Projet) obj;
-                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                logger.log(Level.INFO, "---Annulation restauration---", "Message");
                 // Traitement
                 annulerTraiteur(projet.getReference(), projet.getDate());
                 
@@ -142,7 +142,7 @@ public class GestionRestauration implements MessageListener {
             try {
                 // on est de type repas Assis, on va donc demander une réservation au traiteur externe via SOAP
                 if (reserverTraiteur(p.getManif(), p.getDate(), p.getParticipants())){
-                    logger.log(Level.INFO, "Traiteur  reservé ");
+                    logger.log(Level.INFO, "---> Traiteur externe reservé");
                 } else {
                     throw new TraiteurExterneException(p);
                 }

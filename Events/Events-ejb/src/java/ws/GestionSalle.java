@@ -59,9 +59,9 @@ public class GestionSalle implements MessageListener {
     @Override
     public void onMessage(Message message) {
         try {
-            if(message.getJMSType().equals(Nommage.MSG_PROJET)){
+            if(message.getJMSType().equals(Nommage.MSG_RESA_SALLE)){
                 this.traiterDemande(message);
-            } else {
+            } else if(message.getJMSType().equals(Nommage.MSG_ANNUL_SALLE)) {
                 this.traiterAnnulation(message);
             }
         } catch (JMSException ex) {
@@ -89,7 +89,7 @@ public class GestionSalle implements MessageListener {
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
                 Projet projet = (Projet) obj;
-                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                logger.log(Level.INFO, "----Reservation de salle----", "Message");
                 // Traitement
                 traiterResaSalle(projet);
 
@@ -110,7 +110,7 @@ public class GestionSalle implements MessageListener {
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
                 Projet projet = (Projet) obj;
-                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                logger.log(Level.INFO, "----Annulation de salle----", "Message");
                 // Traitement
                 
                 

@@ -49,7 +49,7 @@ public class Boissons implements Serializable {
         this.stock.ajouterStock(i);
     }
     
-    public void commanderStock(){
-        this.ajouterStock(50);
+    public void commanderStock(int i){
+        this.ajouterStock(i + 50);
     }
 }

@@ -64,34 +64,30 @@ public class BoissonsSingleton {
         
        // boissons paramétrés dans le formulaire
        if(p.hasBlanc_sec()){
-           Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "reservation blanc sec ");
            this.gererStock(boissons.get(Boissons.BLANCSEC), p, coefficient);
        }
        if(p.hasChampagne()){
-           Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "reservation champagne");
            this.gererStock(boissons.get(Boissons.CHAMPAGNE), p, coefficient);
        }
        if(p.hasCremant()){
-           Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "reservation cremant");
            this.gererStock(boissons.get(Boissons.CREMANT), p, coefficient);
        }
        if(p.hasRouge()){
-           Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "reservation rouge");
            this.gererStock(boissons.get(Boissons.ROUGE), p, coefficient);
        }
     }
     
     public void gererStock(Boissons b, Projet p, int coefficient){
-        Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "boissons " + b.getNom());
-        Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "rprojet " + p.getReference());
-        Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "coeff " + coefficient);
-        if(b.getQteStock() > p.getParticipants() / coefficient){
-                b.enleverStock(p.getParticipants() / coefficient);
+        int qteCommande = p.getParticipants() / coefficient;
+        if(b.getQteStock() > qteCommande){
+                b.enleverStock(qteCommande);
+                logger.log(Level.INFO, "---Boisson reservée : "+b.getNom()+" ("+qteCommande+")---", "Message");
             } else {
-                Logger.getLogger(BoissonsSingleton.class.getName()).log(Level.SEVERE, "commande de produit " + b.getNom(), b);
                 // Si j'ai pas assez de boissons, je commande d'abord du nouveau stock avant de pouvoir destocker
-                b.commanderStock();
-                b.enleverStock(p.getParticipants() / coefficient);
+                b.commanderStock(qteCommande);
+                logger.log(Level.INFO, "/!\\ Produit manquant. Commande de produit " + b.getNom(), b);
+                b.enleverStock(qteCommande);
+                logger.log(Level.INFO, "---Boisson reservée : "+b.getNom()+" ("+qteCommande+")---", "Message");
             }
     }
 }

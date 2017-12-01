@@ -30,8 +30,8 @@ import messages.Projet;
 @LocalBean
 public class ProjetSingleton {
     
-    @Resource(lookup = "Event_Demande")
-    private Topic topicProjet;
+    @Resource(lookup = Nommage.TOPIC_DEMANDE)
+    private Topic topicDemande;
     
     @Inject
     private JMSContext contextProjet;
@@ -51,12 +51,11 @@ public class ProjetSingleton {
         } catch (JMSException ex) {
             Logger.getLogger(ProjetSingleton.class.getName()).log(Level.SEVERE, null, ex);
         }
-        contextProjet.createProducer().send(topicProjet, p);
+        contextProjet.createProducer().send(topicDemande, message);
         return p.getReference();
     }
     
     public String annulerPrestation(String ref){
-        projets.remove(ref);
         ObjectMessage message = contextProjet.createObjectMessage(ref);
         try {
             message.setJMSType(Nommage.MSG_ANNULATION);
@@ -65,7 +64,7 @@ public class ProjetSingleton {
         }
     
         
-        contextProjet.createProducer().send(topicProjet, ref);
+        contextProjet.createProducer().send(topicDemande, message);
         return "Prestation annulée avec succès";
     }
     

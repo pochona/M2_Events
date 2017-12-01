@@ -20,6 +20,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.Topic;
 import messages.Nommage;
 import messages.Projet;
+import static ws.GPListener_Demande.logger;
 
 /**
  *
@@ -52,31 +53,54 @@ public class GPListener_Confirmation implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
-        Projet pp = new Projet();
         try {
-            logger.log(Level.INFO, "GP Confirmation "  + message.getJMSType(), "Message");
-            logger.log(Level.INFO, "GP Confirmation "  + message.getBody(Projet.class), "Message");
+            if(message.getJMSType().equals(Nommage.MSG_PROJET)){
+                this.traiterDemande(message);
+            } else {
+                this.traiterAnnulation(message);
+            }
         } catch (JMSException ex) {
-            Logger.getLogger(GPListener_Confirmation.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GPListener_Demande.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+    }
+    
+    public void traiterDemande(Message message) throws JMSException{
         if (message instanceof ObjectMessage) {
-             try {
-                 ObjectMessage om = (ObjectMessage) message;
-                 Object obj = om.getObject();
-                 if (obj instanceof Projet) {
-                    // Récupération d'un objet projet
-                    Projet projet = (Projet) obj;
-                    logger.log(Level.INFO, "GP Confirmation "  + projet.getReference(), "Message");
-                    // Traitement
-                    gestionProjet.traiterSalleAttribue(projet);
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "---Projet traité. Fin.---", "Message");
+                // Traitement
+                gestionProjet.traiterConfirmation(projet);
 
-                    // Transmission au Topic Projet
-                    context.createProducer().send(topicReponse, projet);
-                 }
-             } catch (JMSException ex) {
-                 Logger.getLogger(GPListener_Confirmation.class.getName()).log(Level.SEVERE, null, ex);
-             }
+               // Transmission au Topic Projet
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_PROJET);
+                
+                // Transmission au Topic Projet
+                context.createProducer().send(topicReponse, m);
+            }
+        }
+    }
+    
+    public void traiterAnnulation(Message message) throws JMSException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "---Projet annulée. Fin.---", "Message");
+                // Traitement
+                
+
+                // Transmission au Topic Projet
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_ANNULATION);
+                context.createProducer().send(topicReponse, m);
+            }
         }
     }
     

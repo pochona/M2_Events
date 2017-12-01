@@ -70,13 +70,13 @@ public class GPListener_Demande implements MessageListener {
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
                 Projet projet = (Projet) obj;
-                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                logger.log(Level.INFO, "---> Projet à traiter "  + projet.getReference(), "Message");
                 // Traitement
                 gestionProjet.traiterDemande(projet);
 
                // Transmission au Topic Projet
                 Message m = context.createObjectMessage(projet);
-                m.setJMSType(Nommage.MSG_PROJET);
+                m.setJMSType(Nommage.MSG_RESA_SALLE);
                 
                 // Transmission au Topic Projet
                 context.createProducer().send(topicProjet, m);
@@ -91,12 +91,12 @@ public class GPListener_Demande implements MessageListener {
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
                 Projet projet = (Projet) obj;
-                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                logger.log(Level.INFO, "---> Projet à annuler "  + projet.getReference(), "Message");
                 // Traitement
                 gestionProjet.traiterAnnulation(projet);
                 
                 Message m = context.createObjectMessage(projet);
-                m.setJMSType(Nommage.MSG_ANNULATION);
+                m.setJMSType(Nommage.MSG_ANNUL_SALLE);
 
                 // Transmission au Topic Projet
                 context.createProducer().send(topicProjet, m);

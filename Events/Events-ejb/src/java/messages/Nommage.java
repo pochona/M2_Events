@@ -17,7 +17,12 @@ public class Nommage {
     public final static String QUEUE_ESTIMATION = "Event_Estimation";
     
     public final static String MSG_PROJET = "PROJET";
+    public final static String MSG_RESA_SALLE = "RESA_SALLE";
+    public final static String MSG_RESA_RESTAURATION = "RESA_RESTAURATION";
+    
     public final static String MSG_ANNULATION = "ANNULATION";
+    public final static String MSG_ANNUL_SALLE = "ANNUL_SALLE";
+    public final static String MSG_ANNUL_RESTAURATION = "ANNUL_RESTAURATION";
     
     /*
     public final static String MSG_STOCK = "STOCK";
