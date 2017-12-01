@@ -43,6 +43,9 @@ public class Projet implements Serializable {
     private Boolean champagne;
     private Boolean rouge;
     private String statut;
+    private int numeroSalle;
+
+
 
     private Salle salle;
     private ArrayList<Employe> employes;
@@ -106,6 +109,14 @@ public class Projet implements Serializable {
     // Verifier si un projet possède une salle
     public boolean hasSalle(){
         return this.salle != null;
+    }
+    
+    public int getNumeroSalle() {
+        return numeroSalle;
+    }
+
+    public void setNumeroSalle(int numeroSalle) {
+        this.numeroSalle = numeroSalle;
     }
     
     public void setNom(String nom) {
@@ -237,6 +248,7 @@ public class Projet implements Serializable {
     }
 
     public void setSalle(Salle salle) {
+        this.numeroSalle = salle.getNumeroSalle();
         this.salle = salle;
     }
 

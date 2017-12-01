@@ -56,14 +56,13 @@ public class ProjetSingleton {
     }
     
     public String annulerPrestation(String ref){
-        ObjectMessage message = contextProjet.createObjectMessage(ref);
+        ObjectMessage message = contextProjet.createObjectMessage(projets.get(ref));
         try {
             message.setJMSType(Nommage.MSG_ANNULATION);
         } catch (JMSException ex) {
             Logger.getLogger(ProjetSingleton.class.getName()).log(Level.SEVERE, null, ex);
         }
-    
-        
+
         contextProjet.createProducer().send(topicDemande, message);
         return "Prestation annulée avec succès";
     }

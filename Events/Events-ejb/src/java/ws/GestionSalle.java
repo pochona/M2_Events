@@ -69,7 +69,7 @@ public class GestionSalle implements MessageListener {
         }
     }
     
-    public void traiterResaSalle(Projet projet){
+    public void reserverSalle(Projet projet){
         Salle salle;
         // On essaye de récuperer une salle dispo
         try {
@@ -82,6 +82,10 @@ public class GestionSalle implements MessageListener {
         }
     }
     
+    public void annulerSalle(Projet projet){
+        //salleSingleton.annulerSalle(projet.getSalle(), projet);
+    }
+    
     public void traiterDemande(Message message) throws JMSException{
         if (message instanceof ObjectMessage) {
             ObjectMessage om = (ObjectMessage) message;
@@ -91,7 +95,7 @@ public class GestionSalle implements MessageListener {
                 Projet projet = (Projet) obj;
                 logger.log(Level.INFO, "----Reservation de salle----", "Message");
                 // Traitement
-                traiterResaSalle(projet);
+                reserverSalle(projet);
 
                // Transmission au Topic Projet
                 Message m = context.createObjectMessage(projet);
@@ -112,7 +116,7 @@ public class GestionSalle implements MessageListener {
                 Projet projet = (Projet) obj;
                 logger.log(Level.INFO, "----Annulation de salle----", "Message");
                 // Traitement
-                
+                this.annulerSalle(projet);
                 
                 Message m = context.createObjectMessage(projet);
                 m.setJMSType(Nommage.MSG_ANNULATION);

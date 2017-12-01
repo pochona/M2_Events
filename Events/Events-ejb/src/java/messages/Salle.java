@@ -48,6 +48,10 @@ public class Salle implements Serializable {
     public void setOccupation(Date d){
         this.occupation.add(d);
     }
+    
+    public void removeOccupation(Date d){
+        this.occupation.remove(d);
+    }
 
     /**
      * isDisponible : verifier si une salle est dispo à une certaine date

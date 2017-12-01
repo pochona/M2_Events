@@ -115,10 +115,8 @@ public class SalleSingleton {
         return salleCourante;
     }
     
-    public String annulerSalle(int numSalle){
-        Salle s = salles.get(numSalle);
-        //s.setDisponible(true);
-        return "Salle annulée avec succès";
+    public void annulerSalle(Salle s, Projet p){
+        s.removeOccupation(p.getDate());
     }
     
 }

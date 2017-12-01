@@ -63,7 +63,7 @@ public class GestionRestauration implements MessageListener {
         try {
             if(message.getJMSType().equals(Nommage.MSG_RESA_RESTAURATION)){
                 this.traiterDemande(message);
-            } else if(message.getJMSType().equals(Nommage.MSG_ANNUL_SALLE)){
+            } else if(message.getJMSType().equals(Nommage.MSG_ANNUL_RESTAURATION)){
                 this.traiterAnnulation(message);
             }
         } catch (JMSException ex) {
