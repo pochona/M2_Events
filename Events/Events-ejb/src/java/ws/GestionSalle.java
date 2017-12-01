@@ -24,6 +24,7 @@ import messages.Nommage;
 import messages.Projet;
 import messages.Salle;
 import singleton.SalleSingleton;
+import static ws.GPListener_Demande.logger;
 import static ws.GestionRestauration.logger;
 
 /**
@@ -57,27 +58,14 @@ public class GestionSalle implements MessageListener {
     
     @Override
     public void onMessage(Message message) {
-        logger.log(Level.INFO, "Message reçu Gestion Salle : " + message, "Message");
-        if (message instanceof ObjectMessage) {
-             try {
-                 ObjectMessage om = (ObjectMessage) message;
-                 Object obj = om.getObject();
-                 if (obj instanceof Projet) {
-                    // Récupération d'un objet projet
-                    Projet projet = (Projet) obj;
-                    // On traite uniquement si on a pas de salle : à voir pour traiter avec un type message
-                    if(!projet.hasSalle()){
-                        logger.log(Level.INFO, "G. Salle "  + projet.getReference(), "Message");
-                        // Traitement
-                        this.traiterResaSalle(projet);
-                    
-                        // Retour au gestionnaire projet
-                        context.createProducer().send(queueReponse, projet);
-                    }
-                 }
-             } catch (JMSException ex) {
-                 Logger.getLogger(GestionSalle.class.getName()).log(Level.SEVERE, null, ex);
-             }
+        try {
+            if(message.getJMSType().equals(Nommage.MSG_PROJET)){
+                this.traiterDemande(message);
+            } else {
+                this.traiterAnnulation(message);
+            }
+        } catch (JMSException ex) {
+            Logger.getLogger(GPListener_Demande.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -92,6 +80,47 @@ public class GestionSalle implements MessageListener {
         } catch (SalleException ex) {
             logger.log(Level.INFO, ex.toString());
         }
+    }
+    
+    public void traiterDemande(Message message) throws JMSException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                // Traitement
+                traiterResaSalle(projet);
+
+               // Transmission au Topic Projet
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_PROJET);
+                
+                // Transmission au Topic Projet
+                context.createProducer().send(queueReponse, m);
+            }
+       }
+    }
+    
+    public void traiterAnnulation(Message message) throws JMSException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                // Traitement
+                
+                
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_ANNULATION);
+
+                // Transmission au Topic Projet
+                context.createProducer().send(queueReponse, m);
+            }
+       }
     }
     
 }
