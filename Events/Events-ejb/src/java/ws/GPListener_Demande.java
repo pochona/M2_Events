@@ -53,7 +53,7 @@ public class GPListener_Demande implements MessageListener {
     @Override
     public void onMessage(Message message) { 
         try {
-            if(message.getJMSType().equals(Nommage.MSG_ANNULATION)){
+            if(message.getJMSType().equals(Nommage.MSG_PROJET)){
                 this.traiterDemande(message);
             } else {
                 this.traiterAnnulation(message);

@@ -27,6 +27,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import messages.Nommage;
 import messages.Projet;
 import singleton.BoissonsSingleton;
+import static ws.GPListener_Demande.logger;
 
 /**
  *
@@ -52,47 +53,72 @@ public class GestionRestauration implements MessageListener {
     private JMSContext context;
     
     @Resource(mappedName = Nommage.TOPIC_CONFIRMATION)
-    private Topic topicReponse;
+    private Topic topicConfirmation;
     
     public GestionRestauration() {
     }
     
     @Override
     public void onMessage(Message message) {
-        if (message instanceof ObjectMessage) {
-             try {
-                 ObjectMessage om = (ObjectMessage) message;
-                 Object obj = om.getObject();
-                 if (obj instanceof Projet) {
-                    // Récupération d'un objet projet
-                    Projet projet = (Projet) obj;
-                    if(projet.hasSalle()){
-                        logger.log(Level.INFO, "G. Restauration "  + projet.getReference(), "Message");
-
-                        try {
-                            // Traitement
-                            this.traiterRestauration(projet);
-                        } catch (TraiteurExterneException ex) {
-                            Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        Message m = context.createObjectMessage(projet);
-                        m.setJMSType(Nommage.MSG_PROJET);
-                        
-                        // Retour dans Confirmation
-                        context.createProducer().send(topicReponse, m);
-                    }
-                 }
-             } catch (JMSException ex) {
-                 Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
-            /* } catch (DatatypeConfigurationException ex) {
-                Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);*/
+        try {
+            if(message.getJMSType().equals(Nommage.MSG_PROJET)){
+                this.traiterDemande(message);
+            } else {
+                this.traiterAnnulation(message);
             }
+        } catch (JMSException ex) {
+            Logger.getLogger(GPListener_Demande.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (DatatypeConfigurationException ex) {
+            Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (TraiteurExterneException ex) {
+            Logger.getLogger(GestionRestauration.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-       private boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
-        app.Traiteur_Service service = new app.Traiteur_Service();
-        app.Traiteur port = service.getTraiteurPort();
+    public void traiterDemande(Message message) throws JMSException, TraiteurExterneException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                // Traitement
+                this.traiterRestauration(projet);
+
+               // Transmission au Topic Projet
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_PROJET);
+                
+                // Transmission au Topic Projet
+                context.createProducer().send(topicConfirmation, m);
+            }
+       }
+    }
+    
+    public void traiterAnnulation(Message message) throws JMSException, DatatypeConfigurationException{
+        if (message instanceof ObjectMessage) {
+            ObjectMessage om = (ObjectMessage) message;
+            Object obj = om.getObject();
+            if (obj instanceof Projet) {
+                // Récupération d'un objet projet
+                Projet projet = (Projet) obj;
+                logger.log(Level.INFO, "GP Demande "  + projet.getReference(), "Message");
+                // Traitement
+                annulerTraiteur(projet.getReference(), projet.getDate());
+                
+                Message m = context.createObjectMessage(projet);
+                m.setJMSType(Nommage.MSG_ANNULATION);
+
+                // Transmission au Topic Projet
+                context.createProducer().send(topicConfirmation, m);
+            }
+       }
+    }
+    
+    private boolean reserverTraiteur(String refProjet, Date dateEvent, int participants) throws DatatypeConfigurationException {
+        soap.Traiteur_Service service = new soap.Traiteur_Service();
+        soap.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);
@@ -100,8 +126,8 @@ public class GestionRestauration implements MessageListener {
     }
     
      private boolean annulerTraiteur(String refProjet, Date dateEvent) throws DatatypeConfigurationException {
-        app.Traiteur_Service service = new app.Traiteur_Service();
-        app.Traiteur port = service.getTraiteurPort();
+        soap.Traiteur_Service service = new soap.Traiteur_Service();
+        soap.Traiteur port = service.getTraiteurPort();
         GregorianCalendar c = new GregorianCalendar();
         c.setTime(dateEvent);
         XMLGregorianCalendar date2 = DatatypeFactory.newInstance().newXMLGregorianCalendar(c);

@@ -30,4 +30,9 @@ public class GestionProjet implements GestionProjetLocal {
         projet.annuler();
     }
 
+    @Override
+    public void traiterConfirmation(Projet projet) {
+        //
+    }
+
 }

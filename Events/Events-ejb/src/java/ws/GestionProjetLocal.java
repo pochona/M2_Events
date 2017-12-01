@@ -20,4 +20,6 @@ public interface GestionProjetLocal {
     public void traiterSalleAttribue(Projet projet);
     
     public void traiterAnnulation(Projet projet);
+    
+    public void traiterConfirmation(Projet projet);
 }
