@@ -70,4 +70,8 @@ public class ProjetSingleton {
     public String retournerStatut(String ref) {
         return projets.get(ref).getStatut();
     }
+    
+    public Projet findProjet(String ref){
+        return projets.get(ref);
+    }
 }

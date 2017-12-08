@@ -20,6 +20,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.Topic;
 import messages.Nommage;
 import messages.Projet;
+import singleton.ProjetSingleton;
 
 /**
  *
@@ -38,6 +39,9 @@ public class GPListener_Demande implements MessageListener {
     
     @Inject
     private JMSContext context;
+    
+    @EJB
+    ProjetSingleton projetSingleton;
     
     @Resource(mappedName = Nommage.TOPIC_PROJET)
     private Topic topicProjet;
@@ -69,7 +73,7 @@ public class GPListener_Demande implements MessageListener {
             Object obj = om.getObject();
             if (obj instanceof Projet) {
                 // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "---> Projet à traiter "  + projet.getReference(), "Message");
                 // Traitement
                 gestionProjet.traiterDemande(projet);
@@ -89,8 +93,8 @@ public class GPListener_Demande implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "---> Projet à annuler "  + projet.getReference(), "Message");
                 // Traitement
                 gestionProjet.traiterAnnulation(projet);

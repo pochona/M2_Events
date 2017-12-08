@@ -20,6 +20,7 @@ import javax.jms.ObjectMessage;
 import javax.jms.Topic;
 import messages.Nommage;
 import messages.Projet;
+import singleton.ProjetSingleton;
 import static ws.GPListener_Confirmation.logger;
 
 /**
@@ -39,6 +40,9 @@ public class GPListener_Salle implements MessageListener {
     
     @Inject
     private JMSContext context;
+    
+    @EJB
+    ProjetSingleton projetSingleton;
     
     @Resource(mappedName = Nommage.TOPIC_PROJET)
     private Topic topicProjet;
@@ -70,8 +74,8 @@ public class GPListener_Salle implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "---Salle reservée, poursuite du traitement---", "Message");
                 
                 // Traitement
@@ -92,8 +96,8 @@ public class GPListener_Salle implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "---Salle annulée, poursuite du traitement---", "Message");
                 // Traitement
                 

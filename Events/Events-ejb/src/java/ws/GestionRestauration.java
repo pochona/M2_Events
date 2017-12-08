@@ -27,6 +27,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import messages.Nommage;
 import messages.Projet;
 import singleton.BoissonsSingleton;
+import singleton.ProjetSingleton;
 import static ws.GPListener_Demande.logger;
 
 /**
@@ -48,6 +49,9 @@ public class GestionRestauration implements MessageListener {
     
     @EJB
     private BoissonsSingleton boissonsSingleton;
+    
+    @EJB
+    ProjetSingleton projetSingleton;
     
     @Inject
     private JMSContext context;
@@ -80,8 +84,8 @@ public class GestionRestauration implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "---Reservation restauration--- "  + projet.getReference(), "Message");
                 // Traitement
                 this.traiterRestauration(projet);
@@ -101,8 +105,8 @@ public class GestionRestauration implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "---Annulation restauration---", "Message");
                 // Traitement
                 annulerTraiteur(projet.getReference(), projet.getDate());

@@ -23,6 +23,7 @@ import javax.jms.Topic;
 import messages.Nommage;
 import messages.Projet;
 import messages.Salle;
+import singleton.ProjetSingleton;
 import singleton.SalleSingleton;
 import static ws.GPListener_Demande.logger;
 import static ws.GestionRestauration.logger;
@@ -44,6 +45,9 @@ public class GestionSalle implements MessageListener {
 
     @EJB
     private SalleSingleton salleSingleton;
+    
+    @EJB
+    ProjetSingleton projetSingleton;
     
     @Inject
     private JMSContext context;
@@ -83,7 +87,7 @@ public class GestionSalle implements MessageListener {
     }
     
     public void annulerSalle(Projet projet){
-        //salleSingleton.annulerSalle(projet.getSalle(), projet);
+        salleSingleton.annulerSalle(projet.getSalle(), projet);
     }
     
     public void traiterDemande(Message message) throws JMSException{
@@ -91,8 +95,8 @@ public class GestionSalle implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "----Reservation de salle----", "Message");
                 // Traitement
                 reserverSalle(projet);
@@ -112,8 +116,8 @@ public class GestionSalle implements MessageListener {
             ObjectMessage om = (ObjectMessage) message;
             Object obj = om.getObject();
             if (obj instanceof Projet) {
-                // Récupération d'un objet projet
-                Projet projet = (Projet) obj;
+                // Récupération du projet
+                Projet projet = projetSingleton.findProjet(((Projet) obj).getReference());
                 logger.log(Level.INFO, "----Annulation de salle----", "Message");
                 // Traitement
                 this.annulerSalle(projet);
