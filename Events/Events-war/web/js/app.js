@@ -61,14 +61,16 @@ app.controller('ReservationCtrl', function($scope, $http, $window) {
 
 app.controller('ListeCtrl', function($scope, $http, $window) {
 
-	$scope.addReservation = function () {
-        var url = baseUrl+"/webresources/reservation";
-        $http.get(url, $scope.reservation).then(function mySuccess(response) {
-                var reponse = response.data;
-                $window.location.href = baseUrl+'/confirmation_verif.html?ref='+reponse;
+	$scope.verifReservation = function () {
+        var url = baseUrl+"/webresources/reservation/"+ $scope.resaRef;
+        console.log($scope.resaRef);
+        $http.get(url).then(function mySuccess(response) {
+                console.log(response);
                 $scope.return = response.data;
+                alert("Statut :" + $scope.return);
         }, function myError(response) {
                 $scope.return = response.statutText;
+                alert("Pas de réservation avec cette référence");
         });
     };
     

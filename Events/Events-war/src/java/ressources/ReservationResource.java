@@ -42,9 +42,10 @@ public class ReservationResource {
      * @return an instance of java.lang.String
      */
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public String getJson(String ref) {
-        return projetSingleton.retournerStatut(ref);
+    @Path ("/{refProjet}")
+    @Produces(MediaType.TEXT_PLAIN)
+    public String getJson(@PathParam("refProjet") String refProjet) {
+        return projetSingleton.retournerStatut(refProjet);
     }
 
    /**
