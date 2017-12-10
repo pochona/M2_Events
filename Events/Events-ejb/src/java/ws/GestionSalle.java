@@ -82,6 +82,7 @@ public class GestionSalle implements MessageListener {
             logger.log(Level.INFO, "Salle dispo : " + salle, "Message");
             projet.setSalle(salle);
         } catch (SalleException ex) {
+            projet.erreur();
             logger.log(Level.INFO, ex.toString());
         }
     }
